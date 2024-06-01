@@ -6,6 +6,7 @@ const upload = require("../helpers/fileUpload");
 const users = require("../models/users");
 const fileDel = require("../helpers/fileDelete");
 const { response500, response404, response400 } = require("../helpers/response");
+const { response } = require("express");
 
 async function store(req, res) {
     try {
@@ -61,6 +62,45 @@ async function avatar(req, res) {
     }
 }
 
+async function show(req, res) {
+    try {
+        const user = users.findByPk(req.params.id);
+        if (!user) return response404(res, "User not found");
+
+        return res.status(200).json({
+            success: true,
+            code: 200,
+            message: 'Found User',
+            data: user
+        });
+
+    } catch (err) {
+        return response500(res, err.message);
+    }
+}
+
+async function update(req, res) {
+    try {
+        const user = users.findByPk(req.params.id);
+        if (!user) return response404(res, "User not found");
+
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+
+        user.save();
+
+        return res.status(200).json({
+            success: true,
+            code: 200,
+            message: 'Success Updated Data',
+            data: user
+        });
+
+    } catch (err) {
+        return response500(res, err.message);
+    }
+}
+
 
 async function destroy(req, res) {
     try {
@@ -85,5 +125,7 @@ async function destroy(req, res) {
 module.exports = {
     store,
     destroy,
-    avatar
+    avatar,
+    show,
+    update
 }

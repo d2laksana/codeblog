@@ -8,6 +8,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
+const JwtMiddleware = require("./middleware/jwtMiddleware");
 
 var app = express();
 
@@ -20,8 +21,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.listen(process.env.PORT);
 
 app.use('/', indexRouter);
-app.use('/api/users', usersRouter);
+app.use('/api/users', JwtMiddleware, usersRouter);
 app.use('/api/auth', authRouter)
-app.use('/api/avatar', express.static('public/images/uploads'));
+app.use('/api/avatar', JwtMiddleware, express.static('public/images/uploads'));
 
 module.exports = app;
